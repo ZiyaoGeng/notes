@@ -9,7 +9,7 @@
 
 ## 1. 建立假设函数
 
-假设某个事件发生的概率为$p$，那么该事件发生的几率是发生的概率与不发生的概率的比值，即$\frac{p}{1-p}$，该事件的对数几率（logit）函数为：
+假设某个事件发生的概率为$$p$$，那么该事件发生的几率是发生的概率与不发生的概率的比值，即$$\frac{p}{1-p}$$，该事件的对数几率（logit）函数为：
 $$
 logit(p)=log\frac{p}{1-p}
 $$
@@ -25,13 +25,13 @@ P(Y=1|x) &= \frac{exp(w\cdot x)}{1+ exp(w\cdot x)} &= \pi{x} \tag{1.1}\\
 \end{eqnarray}
 $$
 
-其中$w=(w^{(1)},...b)^T,x=(x^{(1)},...1)^T$。
+其中$$w=(w^{(1)},...b)^T,x=(x^{(1)},...1)^T$$。
 
 
 
 ## 2. 参数估计
 
-给定训练集$T=\{(x_1,y_1),...,(x_m,y_m)\}$，采用**极大似然估计**来估计模型参数，似然函数为：
+给定训练集$$T=\{(x_1,y_1),...,(x_m,y_m)\}$$，采用**极大似然估计**来估计模型参数，似然函数为：
 $$
 L(w)=\prod_{i=1}^{m}[\pi(x_i)]^{y_i}[1-\pi(x_i)]^{1-y_i} \tag{1.3}
 $$
@@ -39,7 +39,7 @@ $$
 $$
 L(w)=\sum^{m}_{i=1}y_ilog(\pi(x_i))+(1-y_i)log(1-\pi(x_i)) \tag{1.4}
 $$
-对其求最大值，估计参数$w$：
+对其求最大值，估计参数$$w$$：
 $$
 w^*=\underset{w}{argmax}\sum^{m}_{i=1}y_ilog(\pi(x_i))+(1-y_i)log(1-\pi(x_i)) \tag{1.5}
 $$
@@ -77,7 +77,7 @@ w :=& w-\alpha\frac{\partial }{\partial w}J(w) \tag{1.15}\\
 :=& w-\alpha\frac{1}{m}\sum_{i=1}^{m}(\pi(x_i)-y_i)x_i \tag{1.16}
 \end{eqnarray}
 $$
-其中$\alpha$为学习率。
+其中$$\alpha$$为学习率。
 
 
 
@@ -87,7 +87,7 @@ $$
 $$
 J(w)=-\frac{1}{m}\sum^{m}_{i=1}y_ilog(\pi(x_i))+(1-y_i)log(1-\pi(x_i))+\frac{\lambda}{2m}\|w\|_2
 $$
-其中，$\lambda$为正则化参数，$\|\cdot\|_2为L_2$正则化项。
+其中，$$\lambda$$为正则化参数，$$\|\cdot\|_2为L_2$$正则化项。
 
 
 
@@ -105,11 +105,11 @@ $$
 
 （1）【softmax回归】修改逻辑回归的损失函数；使用**softmax函数**构造模型解决多分类问题，softmax分类模型会有相同于类别数的输出，输出的值为对于样本属于各个类别的概率，最后对于样本进行预测的类型为概率值最高的那个类别；
 
-> **Softmax函数**，或称**归一化指数函数**，是Sigmoid函数的一种推广，它能将一个含任意实数的K维向量$\mathbf{z}$“压缩”到另一个K维实向量$\sigma(\mathbf{z})$中，使得每一个元素的范围都在$(0,1)$之间，并且所有元素的和为1：
+> **Softmax函数**，或称**归一化指数函数**，是Sigmoid函数的一种推广，它能将一个含任意实数的K维向量$$\mathbf{z}$$“压缩”到另一个K维实向量$$\sigma(\mathbf{z})$$中，使得每一个元素的范围都在$$(0,1)$$之间，并且所有元素的和为1：
 > $$
 > \sigma(\mathbf{z})_{j}=\frac{e^{z_{j}}}{\sum_{k=1}^{K} e^{z_{k}}} \quad \text { for } j=1, \ldots, K
 > $$
-> 样本$x$属于第$j$个分类的概率为：
+> 样本$$x$$属于第$$j$$个分类的概率为：
 > $$
 > P(y=j \mid \mathbf{x})=\frac{e^{\mathbf{x}^{\top} \mathbf{w}}}{\sum_{k=1}^{K} e^{\mathbf{x}^{\top} \mathbf{w}}}
 > $$
@@ -187,4 +187,4 @@ class LogisticReressionClassifier:
 $$
 D_{KL}(p||q)=\displaystyle\sum_xp(x)log\frac{p(x)}{q(x)}=\displaystyle\sum_xp(x)(logp(x)-logq(x))
 $$
-且$D_{KL}(p||q)=-\displaystyle\sum_xp(x)logq(x)-(-\displaystyle\sum_xp(x)logp(x))=H(p,q)-H(p)$，**KL散度=交叉熵-真实概率分布的熵**，因为交叉熵越大，KL散度越大，所以也可以用交叉熵来衡量两个概率分布之间的距离，所以可以用交叉熵作为逻辑回归的损失函数。
+且$$D_{KL}(p||q)=-\displaystyle\sum_xp(x)logq(x)-(-\displaystyle\sum_xp(x)logp(x))=H(p,q)-H(p)$$，**KL散度=交叉熵-真实概率分布的熵**，因为交叉熵越大，KL散度越大，所以也可以用交叉熵来衡量两个概率分布之间的距离，所以可以用交叉熵作为逻辑回归的损失函数。
