@@ -2,15 +2,7 @@
 
 * [Introduction](README.md)
 
-## 机器学习
+## machine learning
 
-* [Untitled](ji-qi-xue-xi/untitled-1.md)
-
-## 深度学习
-
-* [Untitled](shen-du-xue-xi/untitled.md)
-
-## 推荐系统
-
-* [Untitled](tui-jian-xi-tong/untitled.md)
+* [XGBoost](machine-learning/ml-1.md)
 
