@@ -1,31 +1,25 @@
-
-
-## Transformer
-
-文章《 [Attention is All You Need](https://arxiv.org/abs/1706.03762)》；
-
-博客：https://jalammar.github.io/illustrated-transformer/?spm=ata.13261165.0.0.34fb48aaFxc8Jt
+# Transformer
 
 Transformer，是一个sequence-to-sequence模型，2017年提出。与其他Seq2Seq模型不同的是，它抛弃了传统的RNN与CNN，完全依赖注意机制来构成整个网络的架构，广泛的应用于机器翻译、语音识别等领域，当然也有在序列推荐中有具体的应用。Transformer也是一个encoder-decoder的结构，由自注意力机制（self attention）和前馈神经网络（Feed Forward）堆叠而成。论文中整体的结构如下所示：
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/144.png" style="zoom:50%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/144.png" style="zoom:50%;" />
 
 由于注意力机制是整个网络的核心，因此先由它展开。
 
 
 
-## 注意力机制
+## 1. 注意力机制
 
-用$\mathbf{X}=[x_1,...,x_N] \in \mathbb{R}^{d_k \times N}$表示$N$组输入信息，其中$d_k$维向量$x_n \in \mathbb{R}^{d_k},n \in [1,N]$表示一组输入的信息（向量）。注意力机制的计算可以分为两步：
+用$$\mathbf{X}=[x_1,...,x_N] \in \mathbb{R}^{d_k \times N}$$表示$$N$$组输入信息，其中$$d_k$$维向量$$x_n \in \mathbb{R}^{d_k},n \in [1,N]$$表示一组输入的信息（向量）。注意力机制的计算可以分为两步：
 
 1. 在所有输入信息上计算**注意力分布**；
 2. 根据注意力分布来计算输入信息的加权平均；
 
 **注意力分布：**
 
-为了从$N$个输入向量$[x_1,...,x_n]$中选择出和某个特定任务相关的信息，需要引入一个和任务相关的表示，即**查询向量$q \in \mathbb{R}^{d_k}$**，通过一个打分函数来计算**每个输入向量和查询向量之间的相关性**。
+为了从$$N$$个输入向量$$[x_1,...,x_n]$$中选择出和某个特定任务相关的信息，需要引入一个和任务相关的表示，即**查询向量$$q \in \mathbb{R}^{d_k}$$**，通过一个打分函数来计算**每个输入向量和查询向量之间的相关性**。
 
-给定一个和任务相关的查询量量$\mathbf{q}$，用注意力变量$z \in [1,N]$来表示被选择信息的索引位置，即$z=n$表示选择了第$n$个输入向量。首先计算在给定$\mathbf{q}$和$\mathbf{X}$下，选择第$i$个输入向量的概率$\alpha_n$，
+给定一个和任务相关的查询量量$$\mathbf{q}$$，用注意力变量$$z \in [1,N]$$来表示被选择信息的索引位置，即$$z=n$$表示选择了第$$n$$个输入向量。首先计算在给定$$\mathbf{q}$$和$$\mathbf{X}$$下，选择第$$i$$个输入向量的概率$$\alpha_n$$，
 $$
 \begin{array}{l}
 \alpha_n &= p(z=n|\mathbf{X},\mathbf{q})\\
@@ -33,14 +27,14 @@ $$
 &=\frac{exp(s(\mathbf{x}_n,\mathbf{q}))}{\displaystyle\sum_{j=1}^{N}exp(s(\mathbf{x}_j, \mathbf{q}))}
 \end{array}
 $$
-$\alpha_n$称为**注意力分布**，也可以说是在给定任务相关的查询$q$时，第$n$个输入向量受关注的程度。$s(\mathbf{x}, \mathbf{q})$为注意力打分函数，主要包括：
+$$\alpha_n$$称为**注意力分布**，也可以说是在给定任务相关的查询$$q$$时，第$$n$$个输入向量受关注的程度。$$s(\mathbf{x}, \mathbf{q})$$为注意力打分函数，主要包括：
 
-1. 加性模型：$s(\mathbf{x}, \mathbf{q})=\mathbf{v}^Ttanh(\mathbf{Wx}+\mathbf{Uq})$
-2. 点积模型：$s(\mathbf{x}, \mathbf{q})=\mathbf{x^Tq}$
-3. 缩放点积模型：$s(\mathbf{x}, \mathbf{q})=\frac{\mathbf{x^Tq}}{\sqrt{d_k}}$
-4. 双线性模型：$s(\mathbf{x}, \mathbf{q})=\mathbf{x^TWq}$
+1. 加性模型：$$s(\mathbf{x}, \mathbf{q})=\mathbf{v}^Ttanh(\mathbf{Wx}+\mathbf{Uq})$$
+2. 点积模型：$$s(\mathbf{x}, \mathbf{q})=\mathbf{x^Tq}$$
+3. 缩放点积模型：$$s(\mathbf{x}, \mathbf{q})=\frac{\mathbf{x^Tq}}{\sqrt{d_k}}$$
+4. 双线性模型：$$s(\mathbf{x}, \mathbf{q})=\mathbf{x^TWq}$$
 
-其中$\mathbf{W,U,v}$为可学习的参数，$D$为输入向量的维度。
+其中$$\mathbf{W,U,v}$$为可学习的参数，$$D$$为输入向量的维度。
 
 在Transformer中，注意力打分函数选择**缩放点积模型**。文章先解释了使用点积模型的**原因**：
 
@@ -48,9 +42,9 @@ $\alpha_n$称为**注意力分布**，也可以说是在给定任务相关的查
 
 简单来说，就是点积模型可以使用矩阵乘法进行计算（GPU）。
 
-然后在点积的基础上加入缩放是因为：当输入维度$d_k$较高时，点积模型的值通常有较大的方差，从而导致Softmax函数的梯度比较小，而缩放点击模型可以很好的解决这个问题。
+然后在点积的基础上加入缩放是因为：当输入维度$$d_k$$较高时，点积模型的值通常有较大的方差，从而导致Softmax函数的梯度比较小，而缩放点击模型可以很好的解决这个问题。
 
-> We suspect that for large values of $d_k$ , the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients. To counteract this effect, we scale the dot products by $\frac{1}{\sqrt{d_k}}$ .
+> We suspect that for large values of $$d_k$$ , the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients. To counteract this effect, we scale the dot products by $$\frac{1}{\sqrt{d_k}}$$ .
 
 **加权平均：**
 
@@ -62,7 +56,7 @@ $$
 
 
 
-### Query-Key-Value
+### 1.1 Query-Key-Value
 
 以上是比较直观的注意力机制的解释，但在大部分论文中，都会使用key-value的格式来表示**输入信息**，即计算注意力分布时使用键key，而值value则用来计算聚合的信息，因此上述内容就是key=value。
 
@@ -76,21 +70,23 @@ $$
 
 论文中具体结构如下所示：
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/145.png" style="zoom:50%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/145.png" style="zoom:50%;" />
 
-### 多头注意力机制
 
-多头注意力（Multi-Head Attention）就是将查询向量$q$扩展为多个查询$Q=[q_1,q_2,...,q_h]$来并行地从输入中选取多组信息，每个注意力关注输入信息的不同部分：
+
+### 1.2 多头注意力机制
+
+多头注意力（Multi-Head Attention）就是将查询向量$$q$$扩展为多个查询$$Q=[q_1,q_2,...,q_h]$$来并行地从输入中选取多组信息，每个注意力关注输入信息的不同部分：
 $$
 \begin{aligned} \operatorname{MultiHead}(Q, K, V) &=\text { Concat }\left(\text { head }_{1}, \ldots, \text { head }_{\mathrm{h}}\right) W^{O} \\ \text { where head }_{\mathrm{i}} &=\text { Attention }\left(Q W_{i}^{Q}, K W_{i}^{K}, V W_{i}^{V}\right) \end{aligned}
 $$
-其中，$W_{i}^{Q} \in \mathbb{R}^{{N} \times d_{k}}, W_{i}^{K} \in \mathbb{R}^{{N } \times d_{k}}, W_{i}^{V} \in \mathbb{R}^{hd_k\times d_{model}}$，为学习的参数矩阵，$d_{model}$为最后所需的维度。
+其中，$$W_{i}^{Q} \in \mathbb{R}^{{N} \times d_{k}}, W_{i}^{K} \in \mathbb{R}^{{N } \times d_{k}}, W_{i}^{V} \in \mathbb{R}^{hd_k\times d_{model}}$$，为学习的参数矩阵，$$d_{model}$$为最后所需的维度。
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/146.png" style="zoom:50%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/146.png" style="zoom:50%;" />
 
 
 
-###自注意力机制模型
+###1.3 自注意力机制模型
 
 **引入自注意力机制的原因：**
 
@@ -102,9 +98,9 @@ $$
 
 **自注意力机制是整个Transformer的核心**。具体步骤如下：
 
-1. 定义输入序列为$X = [x_1 ,··· ,x_N] \in \mathbb{R}^{D_x×N}$，输出序列为$H=[h_1,...,h_N] \in \mathbb{R}^{D_v \times N}$；
+1. 定义输入序列为$$X = [x_1 ,··· ,x_N] \in \mathbb{R}^{D_x×N}$$，输出序列为$$H=[h_1,...,h_N] \in \mathbb{R}^{D_v \times N}$$；
 
-2. 对于整个输入序列$X$，生成三个向量序列：
+2. 对于整个输入序列$$X$$，生成三个向量序列：
    $$
    \begin{array}{l}
    Q=W_{Q} X \in \mathbb{R}^{D_{k} \times N} \\ 
@@ -112,46 +108,46 @@ $$
    V=W_{V} X \in \mathbb{R}^{D_{v} \times N}
    \end{array}
    $$
-   其中$W_Q \in \mathbb{R}^{D_k \times D_x}, W_K \in \mathbb{R}^{D_k \times D_x}, W_V \in \mathbb{R}^{D_{v} \times D_x}$，且$Q=[q_1,...,q_N], K=[k_1,...,k_N], V=[v1,...,v_N]$，分别为查询向量、键向量、值向量构成的矩阵（**通过输入序列产生**）。
+   其中$$W_Q \in \mathbb{R}^{D_k \times D_x}, W_K \in \mathbb{R}^{D_k \times D_x}, W_V \in \mathbb{R}^{D_{v} \times D_x}$$，且$$Q=[q_1,...,q_N], K=[k_1,...,k_N], V=[v1,...,v_N]$$，分别为查询向量、键向量、值向量构成的矩阵（**通过输入序列产生**）。
 
 3. 使用缩放点积作为注意力打分函数，那么输出向量序列为：
    $$
    H=softmax(\frac{K^TQ}{\sqrt{D_k}})V
    $$
 
-$N=2, D_x=3, D_v=3$，自注意力机制如下所示：
+$$N=2, D_x=3, D_v=3$$，自注意力机制如下所示：
 
-![](/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/147.png)
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/147.png" style="zoom:50%;" />
 
 
 
 论文中，Transformer内部具体使用的是一个**多头自注意力机制**，即多头注意力机制的概念+自注意力机制：
 
-![](/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/148.png)
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/148.png" style="zoom:50%;" />
 
 以上便是注意力机制的所有内容。
 
 
 
-## 模型结构
+## 2. 模型结构
 
 Transformer是一个Encoder-Decoder结构。
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/149.png" style="zoom:67%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/149.png" style="zoom:67%;" />
 
 论文中提到，Transformer的编码层由6个相同的层（dentical layers）堆叠而成，解码层同样由6个相同的层堆叠而成，如下所示：
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/150.png" style="zoom:50%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/150.png" style="zoom: 33%;" />
 
 
 
-### 编码层
+### 2.1 编码层
 
 **总体结构：**
 
 编码层由六个相同的层构成，而每一个又则由两个子层构成：第一个便是上述提到的**多头自注意力机制层**，第二个便是简单的**全连接的前向网络**，如下所示：
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/151.png" style="zoom:67%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/151.png" style="zoom:67%;" />
 
 **全连接网络：**
 
@@ -159,129 +155,56 @@ Transformer是一个Encoder-Decoder结构。
 $$
 FNN(x)=max(0,xW_1+b_1)W_2+b_2
 $$
-其中$x$为自注意力层的输出。
+其中$$x$$为自注意力层的输出。
 
 **残差连接：**
 
 观察论文给出的整体模型，我们发现在每一层中，还引入了一个**残差连接**（residual connection），之后通过了一个**层的Normalization**。最终编码层每一层的结构如下：
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/156.png"  />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/156.png" style="zoom:50%;" />
 
-###  解码层
+###  2.2 解码层
 
 解码层也是与编码层一样，具有相同的6层。但每一层的结构却与编码层不一样，是由三个子层所构成：**多头自注意力机制层、Encoder-Decoder的注意力层和全联接的前向网络层**。相比于编码层，Encoder-Decoder的注意力层主要是为了关注输入的相关部分。
 
-![](/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/155.png)
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/155.png" style="zoom:50%;" />
 
 在解码层，我们重点应该关注的是`Encoder-Decoder Attention`。
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/157.png" style="zoom:50%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/157.png" style="zoom:50%;" />
 
 通过模型结构图，**发现编码层最后的输出作为了中间层的两个输入（Key-Value）**，而在**第一个子层多头自注意力机制的输出作为Query**。该部分就是编码层与解码层的**本质区别**。
 
 
 
-### Encoder-Decoder
+### 2.3 Encoder-Decoder
 
 因此两者的总体结构为：
-![](/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/158.png)
-
-### Positional Encoding
-
-自注意力机制的权重计算都是依赖于$Q$与$K$的相关性的，并没有考虑到**输入的位置信息**。即输入序列不管怎么打乱，那么最后Transformer都是得到类似的结果。
-
-为了解决上述问题，Transformer在输入与编码层之间引入**位置编码**进行修正。
-
-对于一个输入序列$x_1 \in \mathbb{R}^{D \times T}$，经过embedding、位置编码，最后输出为：
-$$
-H^{(0)}=[e_{x_1}+p_1,...,e_{x_T}+p_T]
-$$
-其中$e_{x_1}$表示embedding的结构，$p_{pos}\in \mathbb{R}^D$为位置$pos$的向量表示，即位置编码。其中$p_{pos}$可以作为可学习的参数，也可以通过预定义的方式，论文中定义如下：
-$$
-\begin{aligned} P E_{(p o s, 2 i)} &=\sin \left(p o s / 10000^{2 i / D}\right) \\ P E_{(p o s, 2 i+1)} &=\cos \left(p o s / 10000^{2 i /D}\right) \end{aligned}
-$$
-其中$PE_{(pos,2i)}$表示第$pos$位置的编码向量的第$2i$维，$D$表示编码向量的维度。
-
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/159.png" style="zoom:80%;" />
-
-### 具体参数
-
-论文中指定的参数如下：
-
-- 为了**方便残差连接**，Embedding输出、每个子层的输出维度都为：$d_{model}=512$；
-- Query与Key的维度：$d_k=64$；
-- 多头注意力机制，Query的个数为：$h=8$；
-- Value的维度：$d_v=8$；
-- 因此多头自注意力机制的输出维度为：$d_{model}=hd_v=512$
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/158.png" style="zoom:50%;" />
 
 
 
-## Q&A
+### 2.4 Positional Encoding
 
-Q&A形式也是对Transformer的回顾与思考。
-
-1、什么是Seq2Seq模型？
-
-Seq2Seq，即序列到序列模型，将一个输入序列信号，通过编码-解码操作生成一个新的序列信号。通常应用在机器翻译、语音识别、序列推荐等任务。在不同的场景中，Seq2Seq模型的编码器和解码器的设计都有所不同。例如对于文本摘要部分，输入序列为长句子，输出序列则为摘要短句；语音识别中，输入序列为音频特征，输出序列是识别出的文本；机器翻译中，输入是某一种语言的句子，输出是另一种语言同样含义的句子。
-
-2、Seq2Seq模型的目标
-
-Seq2Seq模型的**目标是估计条件概率**。以机器翻译为例，如下图所示：
-
-![](/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/160.png)“machine leanring”为一个输入序列，机器翻译中称为“源语言”，机器学习为输出序列，称为“目标语言”。\<EOS\>表示输入序列的结束。因此左边三个矩形是一个编码器（Encoder）的内容。**虚线表示上一步的输出作为下一步的输入。**因此在机器翻译的情境中，Seq2Seq模型就是预测输出每一个词的概率值，即估计条件概率：
-$$
-p_{\theta}\left(\boldsymbol{y}_{1: T} \mid \boldsymbol{x}_{1: S}\right)=\prod_{t=1}^{T} p_{\theta}\left(y_{t} \mid \boldsymbol{y}_{1:(t-1)}, \boldsymbol{x}_{1: S}\right)
-$$
-其中$y_t\in\mathcal{V}$为词表$\mathcal{V}$中的某个词。
-
-3、基于RNN的Seq2Seq模型的缺点？
-
-基于RNN的Seq2Seq模型由两个循环神经网络来分别进行编码和解码，它的缺点是：
-
-- 输入序列的信息很难全部保存在编码向量（编码器最后时刻的隐藏状态）中；
-- 当序列很长时，尽管理论上RNN能够建立长距离的依赖关系，但是由于传递信息的容量以及梯度消失问题，实际也只能建立短距离依赖关系；且在解码时，第一个信息（词）需要与输入序列的第一个信息对应，那短距离依赖很容易使得之前的信息所丢失；
-- 由于RNN后一个时刻的隐藏状态必须依赖于前一个隐藏状态，因此无法并行的计算；
-
-4、Transformer对比其他基于RNN的Seq2Seq模型的优点？
-
-Transformer模型摈弃了编码器-解码器中RNN的结构，**完全依赖于自注意力机制**来绘制输入输出的全局依赖关系。因此可以**提高并行计算效率**（不依赖于前一个）以及**捕捉长距离的依赖关系**。
-
-5、Transformer模型的整体结构
-
-论文中给出了编码器最后一层的结构与解码器第一层的结构图示：
-
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/144.png" style="zoom: 33%;" />
-
-实际上按照论文的描述，Transformer的整体结构如下（编码层与解码层分别都有6个相同的层）：
-
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/150.png" style="zoom: 33%;" />
-
-6、位置编码（Positional Encoding）的作用
-
-自注意力机制的权重计算都是依赖于$Q$与$K$的相关性的，**并没有考虑到输入的位置信息**。即输入序列不管怎么打乱，那么最后Transformer都是得到类似的结果（并不像基于RNN的模型输入序列的内容具有一种先后位置关系）。
+自注意力机制的权重计算都是依赖于$$Q$$与$$K$$的相关性的，并没有考虑到**输入的位置信息**。即输入序列不管怎么打乱，那么最后Transformer都是得到类似的结果。
 
 为了解决上述问题，Transformer在输入与编码层之间引入**位置编码**进行修正。
 
-对于一个输入序列$x_1 \in \mathbb{R}^{D \times T}$，经过embedding、位置编码，最后输出为：
+对于一个输入序列$$x_1 \in \mathbb{R}^{D \times T}$$，经过embedding、位置编码，最后输出为：
 $$
 H^{(0)}=[e_{x_1}+p_1,...,e_{x_T}+p_T]
 $$
-其中$e_{x_1}$表示embedding的结构，$p_{pos}\in \mathbb{R}^D$为位置$pos$的向量表示，即位置编码。其中$p_{pos}$可以作为可学习的参数，也可以通过预定义的方式，论文中定义如下：
+其中$$e_{x_1}$$表示embedding的结构，$$p_{pos}\in \mathbb{R}^D$$为位置$$pos$$的向量表示，即位置编码。其中$$p_{pos}$$可以作为可学习的参数，也可以通过预定义的方式，论文中定义如下：
 $$
 \begin{aligned} P E_{(p o s, 2 i)} &=\sin \left(p o s / 10000^{2 i / D}\right) \\ P E_{(p o s, 2 i+1)} &=\cos \left(p o s / 10000^{2 i /D}\right) \end{aligned}
 $$
-其中$PE_{(pos,2i)}$表示第$pos$位置的编码向量的第$2i$维，$i=1,2,...,D$，$D$表示编码向量的维度。
+其中$$PE_{(pos,2i)}$$表示第$$pos$$位置的编码向量的第$$2i$$维，$$D$$表示编码向量的维度。
 
-<img src="/Users/gengziyao/Study/Note/Recommender%2520System/Note/images/159.png" style="zoom: 33%;" />
-
-7、关于Transormer的输入与输出
-
-8、mask
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/159.png" style="zoom:80%;" />
 
 
 
+## 参考资料
 
+[1] [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/?spm=ata.13261165.0.0.34fb48aaFxc8Jt)
 
-
-
-##### Input_shape：
