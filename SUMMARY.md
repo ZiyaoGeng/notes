@@ -13,6 +13,5 @@
 * [集成学习](machine-learning/7_ensemble_learning.md)
 * [XGBoost](machine-learning/8_xgboost.md)
 * [LightGBM](machine-learning/9_lightgbm.md)
-* [k均值聚类](machine-learning/10_k_means.md)
 * [正则化](machine-learning/11_regularization.md)
 
