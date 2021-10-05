@@ -12,7 +12,7 @@
 
 
 
-## Internal Covariate Shift
+## 1. Internal Covariate Shift
 
 在深层网络训练的过程中，**由于网络中参数变化而引起内部结点数据分布发生变化**的这一过程被称作Internal Covariate Shift。
 
@@ -34,7 +34,7 @@ Internal Covariate Shift带来的【问题】：
 
 
 
-### 如何缓解？
+### 1.1 如何缓解？
 
 要缓解ICS的问题，就要明白它产生的原因。ICS产生的原因是由于参数更新带来的网络中每一层输入值分布的改变，并且随着网络层数的加深而变得更加严重，因此我们可以通过固定每一层网络输入值的分布来对减缓ICS问题。
 
@@ -58,7 +58,7 @@ Internal Covariate Shift带来的【问题】：
 
 
 
-## Normalization
+## 2. Normalization
 
 既然白化计算过程比较复杂，那我们就简化一点，比如我们可以尝试单独对每个特征进行normalizaiton就可以了，让每个特征都有均值为0，方差为1的分布就OK。
 
@@ -69,7 +69,7 @@ $$
 h=f\left(\mathbf{g} \cdot \frac{\mathbf{x}-\mu}{\sigma + \epsilon}+\mathbf{b}\right)
 $$
 
-### Batch Normalization
+### 2.1 Batch Normalization
 
 <img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/image-20210321153529184.png" alt="image-20210321153529184" style="zoom:50%;" />
 
@@ -85,7 +85,7 @@ BN 独立地规范化每一个输入维度$$x_i$$ ，【但规范化的参数是
 
 因此，BN 比较适用的场景是：每个 mini-batch 比较大，数据分布比较接近。在进行训练之前，要做【好充分的 shuffle. 否则效果会差很多】。
 
-#### 优点
+#### 2.1.1 优点
 
 Batch Normalization在实际工程中被证明了能够缓解神经网络难以训练的问题，BN具有的优势可以总结为以下三点：
 
@@ -105,7 +105,7 @@ BN通过规范化与线性变换使得每一层网络的输入数据的均值与
 
 在Batch Normalization中，由于我们使用mini-batch的均值与方差作为对整体训练样本均值与方差的估计，尽管每一个batch中的数据都是从总体样本中抽样得到，但不同mini-batch的均值与方差会有所不同，这就为网络的学习过程中增加了随机噪音，与Dropout通过关闭神经元给网络训练带来噪音类似，在一定程度上对模型起到了正则化的效果。
 
-#### Tensorflow
+#### 2.1.2 Tensorflow
 
 训练中，直接计算每个mini-batch中每个神经元的均值和方差；
 
@@ -118,7 +118,7 @@ BN通过规范化与线性变换使得每一层网络的输入数据的均值与
 
 
 
-### Layer Normalization
+### 2.2 Layer Normalization
 
 <img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/image-20210321154115689.png" alt="image-20210321154115689" style="zoom:50%;" />
 

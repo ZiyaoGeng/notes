@@ -1,14 +1,20 @@
 # 优化器
 
+学习大纲：
+
+1. 各个优化器的演进；
 
 
-## 梯度下降变体
+
+## 1. 梯度下降变体
 
 梯度下降有三种变体，它们在计算目标函数的梯度时使用的数据量上有所不同。根据数据量的不同，我们需要在参数更新的准确性和执行更新所需的时间之间进行权衡。
 
-### Batch gradient descent
 
-批量梯度下降法，用整个数据集来计算损失函数的梯度更新参数$\theta$：
+
+### 1.1 Batch gradient descent
+
+批量梯度下降法，用整个数据集来计算损失函数的梯度更新参数$$\theta$$：
 $$
 \theta=\theta-\eta \cdot \nabla_{\theta} J(\theta)
 $$
@@ -18,7 +24,9 @@ $$
 
 批处理梯度下降可能会非常缓慢，对于不适合内存的数据集来说是很难处理的。批量梯度下降也不允许在线更新模型，即使用新的动态示例。
 
-### Stochastic gradient descent
+
+
+### 1.2 Stochastic gradient descent
 
 随机梯度（SGD）是根据单个样本更新梯度：
 $$
@@ -28,9 +36,9 @@ SGD通过一次执行一个更新来消除这种冗余。因此，它通常要�
 
 SGD 的缺点在于收敛速度慢，而且可能会在沟壑的两边持续震荡，停留在一个局部最优点。
 
-### Mini-batch gradient descent
+### 1.3 Mini-batch gradient descent
 
-小批量梯度下降是取$n$个样本进行梯度的计算、更新。
+小批量梯度下降是取$$n$$个样本进行梯度的计算、更新。
 $$
 \theta=\theta-\eta \cdot \nabla_{\theta} J\left(\theta ; x^{(i: i+n)} ; y^{(i: i+n)}\right)
 $$
@@ -51,9 +59,9 @@ Mini-batch梯度下降也存在着一些挑战：
 
 
 
-## 梯度下降优化算法
+## 2. 梯度下降优化算法
 
-### SGD with Momentum
+### 2.1 SGD with Momentum
 
 SGD：
 
@@ -67,7 +75,7 @@ SGD：
 $$
 \begin{aligned} v_{t} &=\gamma v_{t-1}+\eta \nabla_{\theta} J(\theta) \\ \theta &=\theta-v_{t} \end{aligned}
 $$
-从上述公式可以看到，梯度下降方向不仅由当前点的梯度方向决定，而且由此**前累积的下降方向决定**【有一个初始的速度】。动量系数$\gamma$ 一般取0.9。
+从上述公式可以看到，梯度下降方向不仅由当前点的梯度方向决定，而且由此**前累积的下降方向决定**【有一个初始的速度】。动量系数$$\gamma$$ 一般取0.9。
 
 一阶动量是各个时刻梯度方向的指数移动平均值
 
@@ -75,27 +83,25 @@ $$
 
 
 
-### Nesterov accelerated gradient
+### 2.2 Nesterov accelerated gradient
 
 然而，非常不令人满意的是，一个球从山上滚下来，盲目地跟随斜坡。我们希望有一个更聪明的球，这个球具有要去往何处的概念，以便在山坡再次变高之前知道它会慢下来。
 
-我们使用【动量项$】\gamma v_{t-1}$来【移动参数$\theta$】，计算$\theta-\gamma v_{t-1}$可以【给出参数下一个位置的近似，参数将会在哪的粗略想法】：
+我们使用【动量项$$】\gamma v_{t-1}$$来【移动参数$$\theta$$】，计算$$\theta-\gamma v_{t-1}$$可以【给出参数下一个位置的近似，参数将会在哪的粗略想法】：
 $$
 \begin{aligned} v_{t} &=\gamma v_{t-1}+\eta \nabla_{\theta} J\left(\theta-\gamma v_{t-1}\right) \\ \theta &=\theta-v_{t} \end{aligned}
 $$
-同样，我们设置动量项$\gamma$值约为0.9。动量首先计算当前梯度（蓝色小矢量），然后在更新的累积梯度（蓝色矢量）的方向上发生较大的跃迁，【而NAG首先在先前的累积梯度的方向上进行较大的跃迁（棕色矢量），测量梯度，然后进行校正（红色矢量），从而完成NAG更新（绿色矢量）】。此预期更新可防止我们过快地执行并导致响应速度增加，从而显着提高了RNN在许多任务上的性能。
+同样，我们设置动量项$$\gamma$$值约为0.9。动量首先计算当前梯度（蓝色小矢量），然后在更新的累积梯度（蓝色矢量）的方向上发生较大的跃迁，【而NAG首先在先前的累积梯度的方向上进行较大的跃迁（棕色矢量），测量梯度，然后进行校正（红色矢量），从而完成NAG更新（绿色矢量）】。此预期更新可防止我们过快地执行并导致响应速度增加，从而显着提高了RNN在许多任务上的性能。
 
 <img src="https://ruder.io/content/images/2016/09/nesterov_update_vector.png" style="zoom:50%;" />
 
 
 
-
-
-### Adagrad
+### 2.3 Adagrad
 
 Adagrad根据**参数调整学习速率**，进行较小的更新(低学习率)与频繁发生的特征相关联的参数，和较大的更新(高学习率)与不频繁的特征相关联的参数。所以它非常适合处理稀疏数据。
 
-之前，我们更新参数$\theta$时都是以相同的学习率，但是Adagrad却在【每个时间步以不同的学习率来更新参数】。假设$g_t$为$t$时刻的梯度，$g_{ti}$表示$t$时刻参数$\theta_i$的梯度：
+之前，我们更新参数$$\theta$$时都是以相同的学习率，但是Adagrad却在【每个时间步以不同的学习率来更新参数】。假设$$g_t$$为$$t$$时刻的梯度，$$g_{ti}$$表示$$t$$时刻参数$$\theta_i$$的梯度：
 $$
 g_{t, i}=\nabla_{\theta} J\left(\theta_{t, i}\right)
 $$
@@ -107,7 +113,7 @@ Adagrad【基于过去的梯度】来更新学习率：
 $$
 \theta_{t+1, i}=\theta_{t, i}-\frac{\eta}{\sqrt{G_{t, i i}+\epsilon}} \cdot g_{t, i}
 $$
-其中$G_t \in \mathbb{R}^{d\times d}$是一个对角矩阵，对角矩阵上的元素（坐标$i,i$）是在$t$时刻的过去梯度平方和，$\epsilon$是一个平滑系数，防止分母为0（一般取1e-8）。
+其中$$G_t \in \mathbb{R}^{d\times d}$$是一个对角矩阵，对角矩阵上的元素（坐标$$i,i$$）是在$$t$$时刻的过去梯度平方和，$$\epsilon$$是一个平滑系数，防止分母为0（一般取1e-8）。
 
 我们可以向量化实现：
 $$
@@ -119,11 +125,11 @@ Adagrad的主要缺点是其在分母上的平方梯度的积累:【由于每一
 
 
 
-### Adadelta
+### 2.4 Adadelta
 
 Adadelta是对Adagrad的改进，【Adagrad选择过去所有的梯度平方和来更新学习率，而Adadelta则采用了一个**窗口（范围）**选择计算梯度平方和】。
 
-当然并不是低效的存储过去的$w$个梯度平方和，梯度的总和被【递归】定义为【所有过去的平方梯度的衰减平均值】。$E[g^2]_t$只依赖于【过去平均】和【当前的梯度】（$\gamma$类似于动量项，0.9）：
+当然并不是低效的存储过去的$$w$$个梯度平方和，梯度的总和被【递归】定义为【所有过去的平方梯度的衰减平均值】。$$E[g^2]_t$$只依赖于【过去平均】和【当前的梯度】（$$\gamma$$类似于动量项，0.9）：
 $$
 E\left[g^{2}\right]_{t}=\gamma E\left[g^{2}\right]_{t-1}+(1-\gamma) g_{t}^{2}
 $$
@@ -140,23 +146,23 @@ $$
 \Delta \theta_{t}=-\frac{\eta}{\sqrt{E\left[g^{2}\right]_{t}+\epsilon}} g_{t}
 $$
 
-### RMSprop
+### 2.5 RMSprop
 
 与Adadelta基本类似【同一时间独立开发】
 $$
 \begin{aligned} E\left[g^{2}\right]_{t} &=0.9 E\left[g^{2}\right]_{t-1}+0.1 g_{t}^{2} \\ \theta_{t+1} &=\theta_{t}-\frac{\eta}{\sqrt{E\left[g^{2}\right]_{t}+\epsilon}} g_{t} \end{aligned}
 $$
-$\gamma=0.9,\eta=0.001$。
+$$\gamma=0.9,\eta=0.001$$。
 
 
 
-### Adam
+### 2.6 Adam
 
-自适应动量估计（Adaptive Moment Estimation，Adam）也是采用【自适应的学习率】。除了存储【过去平方梯度的指数衰减平均值$v_t$】，Adam还保留了【过去梯度的衰减平均值$m_t$】。动量可以被看作是一个从斜坡上跑下来的球，而Adam则表现得像一个有摩擦力的重球，因此在误差面中倾向于平坦的最小值。计算方式：
+自适应动量估计（Adaptive Moment Estimation，Adam）也是采用【自适应的学习率】。除了存储【过去平方梯度的指数衰减平均值$$v_t$$】，Adam还保留了【过去梯度的衰减平均值$$m_t$$】。动量可以被看作是一个从斜坡上跑下来的球，而Adam则表现得像一个有摩擦力的重球，因此在误差面中倾向于平坦的最小值。计算方式：
 $$
 \begin{aligned} m_{t} &=\beta_{1} m_{t-1}+\left(1-\beta_{1}\right) g_{t} \\ v_{t} &=\beta_{2} v_{t-1}+\left(1-\beta_{2}\right) g_{t}^{2} \end{aligned}
 $$
-$m_t,v_t$分别是梯度的第一动量（均值）和第二个动量（偏移方差）的估计。
+$$m_t,v_t$$分别是梯度的第一动量（均值）和第二个动量（偏移方差）的估计。
 
 在迭代初始阶段，![[公式]](https://www.zhihu.com/equation?tex=m_t) 和 ![[公式]](https://www.zhihu.com/equation?tex=v_t) 有一个向初值的偏移（过多的偏向了 0）。因此，可以对一阶和二阶动量做偏置校正 (bias correction)，Z
 $$
@@ -166,11 +172,11 @@ Adam更新规则：
 $$
 \theta_{t+1}=\theta_{t}-\frac{\eta}{\sqrt{\hat{v}_{t}}+\epsilon} \hat{m}_{t}
 $$
-其中$\beta_1=0.9,\beta_2=0.999,\epsilon=1e-8$。
+其中$$\beta_1=0.9,\beta_2=0.999,\epsilon=1e-8$$。
 
 
 
-## 面试题
+## 3. 面试题
 
 1、SGD,Momentum,Adagard,Adam 原理
 
