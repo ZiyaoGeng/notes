@@ -109,7 +109,7 @@ $$
 > 1 & : & x>0
 > \end{array}\right.$$
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/qP8JRnW6T3rz26Up3TdFrxgR8oHfSt5N4SSTKBgfYnRehvJkK4CRaUs1RmZY37VMo9EKy58LNqA5MXBR3haRAA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" style="zoom:50%;" />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/image-20211005112025998.png" alt="image-20211005112025998" style="zoom:50%;" />
 
 故参数更新为：
 $$
@@ -117,7 +117,7 @@ w_{i}^{\prime} \leftarrow w_{i} = w_{i}-\eta \frac{\partial \mathcal L}{\partial
 $$
 可以观察最后项$$-\eta \frac{\gamma }{n} \operatorname{sgn}\left(w_{i}\right)$$，我们发现它始终让$$w_i \rightarrow 0$$（$$w_i>0$$，为负，$$w_i<0$$，为正），因此L1正则化将**以相同的步长**（注意这里）将任何权重移向0，而不管权重的值是多少。所以可以**实现参数稀疏化**。
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/qP8JRnW6T3rz26Up3TdFrxgR8oHfSt5NYiaia5rfDpicZPeS3NWEL89sDkiaIQOqda18paQptNmY0ElibwYDYxLV1CA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"  />
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/image-20211005112011402.png" alt="image-20211005112011402" style="zoom:50%;" />
 
 对于上图，我们忽略原损失函数对参数的梯度，当$$w>0$$，$$\eta=0.5$$，迭代多次，发现最终$$w=0$$。
 
@@ -150,7 +150,7 @@ $$
 $$
 \frac{\partial \mathrm{Obj}}{\partial w_{i}}=\frac{\partial \mathcal L}{\partial w_{i}}+\frac{\gamma_2 }{n}w_i
 $$
-![图片](https://mmbiz.qpic.cn/mmbiz_png/qP8JRnW6T3rz26Up3TdFrxgR8oHfSt5NoD9ftrEt8GtbE9Le5d2enib9In4Rf3zhic4AxdPJGxU7byiaSdda3shicg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/image-20211005111949760.png" alt="image-20211005111949760" style="zoom:50%;" />
 
 故参数更新为：
 $$
@@ -158,7 +158,7 @@ $$
 $$
 我们可以通过调整学习率$$\eta$$和正则化参数$$\gamma_2$$，使得$$\eta \frac{\gamma_{2}}{n}$$为0～1之间的数，从而衰减$$w_i$$的权重，所有的参数接近于0，从而抑制过拟合。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/qP8JRnW6T3rz26Up3TdFrxgR8oHfSt5Nea4Om7bp9gSFmhO4VzzMXnGlbABiaKrEWLteD0I4rlsK7lkkFzcfgBg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+<img src="https://gzy-gallery.oss-cn-shanghai.aliyuncs.com/img/image-20211005111927502.png" alt="image-20211005111927502" style="zoom:50%;" />
 
 如上图所示，解释了为什么$$L_2$$不会像$$L_1$$那样产生稀疏解，而只是让权值接近0（当权值接近0时，它会采取越来越小的步骤）。
 
