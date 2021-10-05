@@ -1,5 +1,12 @@
 # XGBoost
 
+学习大纲：
+
+1. XGBoost的推导过程（建议看原论文）；
+2. XGBoost的一些优化方法；
+
+
+
 XGBoost是一个可扩展的提升树模型，论文“XGBoost: A Scalable Tree Boosting System”发表在2016年的KDD会议上。文章包括了XGBoost的原理以及对其的优化。
 
 
@@ -281,10 +288,3 @@ Xgboost采取的策略是【先不处理那些值缺失的样本，先依据有�
 **（5）模型实现上的差异**
 
 决策树的学习最耗时的一个步骤就是对特征的值进行排序（因为要确定最佳分割点）。xgboost在训练之前，预先对数据进行了排序，然后保存为block结构，后面的迭代中重复地使用这个结构，大大减小计算量。其能够实现在特征粒度的并行。
-
-
-
-## 面试题
-
-[20道XGBoost面试题](https://mp.weixin.qq.com/s?__biz=MzI1MzY0MzE4Mg==&mid=2247485159&idx=1&sn=d429aac8370ca5127e1e786995d4e8ec&chksm=e9d01626dea79f30043ab80652c4a859760c1ebc0d602e58e13490bf525ad7608a9610495b3d&scene=21#wechat_redirect)
-
