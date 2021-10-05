@@ -15,3 +15,13 @@
 * [LightGBM](machine-learning/9_lightgbm.md)
 * [正则化](machine-learning/11_regularization.md)
 
+## deep learning
+
+* [Word2vec](deep-learning/1_word_to_vector.md)
+* [Normalization](deep-learning/2_normalization.md)
+* [Dropout](deep-learning/3_dropout.md)
+* [优化器](deep-learning/4_optimizer.md)
+* [激活函数](deep-learning/5_activation_function.md)
+* [RNN](deep-learning/6_rnn.md)
+* [Transformer](deep-learning/7_transformer.md)
+
