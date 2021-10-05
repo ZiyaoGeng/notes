@@ -138,4 +138,5 @@ BN通过规范化与线性变换使得每一层网络的输入数据的均值与
 
 [1] [详解深度学习中的Normalization，BN/LN/WN](https://zhuanlan.zhihu.com/p/33173246)
 
-[2] [Batch Normalization原理与实战](
+[2] [Batch Normalization原理与实战](https://zhuanlan.zhihu.com/p/34879333)
+
